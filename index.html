@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 Found - Lost & Found Community</title>
+
+  <!-- Tailwind (from original) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --card-bg: rgba(255,255,255,0.95); --muted: #64748b; }
+    * { box-sizing: border-box; font-family: 'Nunito', sans-serif; }
+    html,body { height: 100%; margin: 0; }
+
+    body {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #bae6fd 50%, #7dd3fc 75%, #38bdf8 100%);
+      min-height: 100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .ghibli-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(105,142,162,0.08);
+      box-shadow: 0 8px 32px rgba(105,142,162,0.06);
+      transition: all .25s ease;
+    }
+    .ghibli-card:hover { transform: translateY(-6px); }
+
+    /* floating animations kept but not wiggle */
+    .floating { animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
+
+    /* pulse glow kept for subtle accent */
+    .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    @keyframes pulseGlow {
+      0%,100%{ box-shadow:0 0 20px rgba(105,142,162,0.25) }
+      50%{ box-shadow:0 0 36px rgba(105,142,162,0.45) }
+    }
+
+    /* fade-in helper */
+    .fade-in { opacity:0; transform: translateY(18px); animation: fadeIn .7s ease forwards; }
+    @keyframes fadeIn { to { opacity:1; transform: translateY(0); } }
+
+    /* Modal basics */
+    .modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.45); z-index:80; align-items:center; justify-content:center; padding:20px; }
+    .modal.active { display:flex; }
+
+    /* Swipe modal (integrated clean swipe file's styling, but without dummy items) */
+    .swipe-modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:70; padding:24px; }
+    .swipe-modal.active { display:flex; background: linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.2)); }
+
+    /* basic accessibility focus */
+    *:focus { outline: 3px solid rgba(66,153,225,0.25); outline-offset:2px; }
+
+    /* small utilities used in the integrated swipe UI */
+    .card { border-radius: 16px; background: white; box-shadow: 0 12px 36px rgba(2,6,23,0.12); overflow:hidden; }
+    .skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e6e6e6 50%,#f0f0f0 75%); background-size:200% 100%; animation: loading 1.4s linear infinite; }
+    @keyframes loading { to { background-position: -200% 0 } }
+
+    /* small responsive tweaks */
+    @media (min-width: 1024px) {
+      .min-w-72 { min-width: 340px; }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+
+  <!-- Header -->
+  <header class="relative z-10 py-8 px-6">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-4xl font-bold text-slate-800 floating tracking-tight">404 Found</h1>
+      <div class="space-x-4">
+        <!-- Keep Updates button, cleaned (opens modal) -->
+        <button onclick="openModal('updatesModal')" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-2xl shadow font-medium">
+          Updates
+        </button>
+        <button onclick="openModal('faqModal')" class="bg-gradient-to-r from-teal-500 to-cyan-600 text-white px-6 py-2 rounded-2xl shadow font-medium">
+          FAQ
+        </button>
+        <!-- Show Swipe (opens swipe modal) -->
+        <button onclick="openSwipe()" id="openSwipeBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-2xl shadow font-medium">
+          Found Items
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-12">
+    <!-- Hero -->
+    <section class="text-center mb-24 fade-in relative">
+      <h2 class="text-6xl font-bold text-slate-800 mb-12 leading-tight tracking-tight">Find What's Lost.<br><span class="text-blue-600">Return What's Found.</span></h2>
+      <div class="flex flex-col md:flex-row gap-10 justify-center items-center">
+        <button onclick="openModal('lostModal')" class="ghibli-card p-10 rounded-3xl text-center min-w-72 group pulse-glow transition-all duration-300 transform hover:scale-105">
+          <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-3">I Lost Something</h3>
+          <p class="text-slate-600 leading-relaxed">Report your lost item and we'll help you find it</p>
+        </button>
+
+        <button onclick="openModal('foundModal')" class="ghibli-card p-10 rounded-3xl text-center min-w-72 group pulse-glow transition-all duration-300 transform hover:scale-105">
+          <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-3">I Found Something</h3>
+          <p class="text-slate-600 leading-relaxed">Help return someone's lost item</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- About (kept exactly as requested) -->
+    <section class="mb-20 fade-in">
+      <div class="ghibli-card p-12 rounded-3xl relative overflow-hidden">
+        <h3 class="text-4xl font-bold text-slate-800 mb-8 text-center tracking-tight">About 404 Found</h3>
+        <p class="text-xl text-slate-600 leading-relaxed text-center max-w-4xl mx-auto">
+          At 404 Found, we believe no valuable memory or belonging should stay lost. We are a team of innovators building a community-driven platform where technology bridges the gap, making the lost meet the found.
+        </p>
+      </div>
+    </section>
+
+    <!-- How It Works (kept) -->
+    <section class="mb-20 fade-in">
+      <div class="ghibli-card p-12 rounded-3xl">
+        <h3 class="text-4xl font-bold text-slate-800 mb-12 text-center tracking-tight">How It Works</h3>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/30">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl shadow-lg">📝</div>
+            <h4 class="font-bold text-xl mb-4 text-slate-800">Report</h4>
+            <p class="text-slate-600">Whether you lost or found an item, click the respective button and fill out the form.</p>
+          </div>
+          <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100/30">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl shadow-lg">🔍</div>
+            <h4 class="font-bold text-xl mb-4 text-slate-800">Match</h4>
+            <p class="text-slate-600">We connect lost items with owners through real-time updates.</p>
+          </div>
+          <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100/30">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl shadow-lg">🤝</div>
+            <h4 class="font-bold text-xl mb-4 text-slate-800">Retrieve</h4>
+            <p class="text-slate-600">Arrange to return the item safely with guidance from our platform.</p>
+          </div>
+          <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-sky-50 to-sky-100/30">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl shadow-lg">⭐</div>
+            <h4 class="font-bold text-xl mb-4 text-slate-800">Feedback</h4>
+            <p class="text-slate-600">Share your experience to help improve our community service.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Industries (kept) -->
+    <section class="mb-20 fade-in">
+      <h3 class="text-4xl font-bold text-slate-800 mb-12 text-center tracking-tight">Industries We Serve</h3>
+      <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div class="ghibli-card p-8 rounded-2xl text-center"> <div class="text-5xl mb-4">🏫</div> <h4 class="font-bold">Schools</h4></div>
+        <div class="ghibli-card p-8 rounded-2xl text-center"> <div class="text-5xl mb-4">🎓</div> <h4 class="font-bold">Campuses</h4></div>
+        <div class="ghibli-card p-8 rounded-2xl text-center"> <div class="text-5xl mb-4">🏨</div> <h4 class="font-bold">Hotels</h4></div>
+        <div class="ghibli-card p-8 rounded-2xl text-center"> <div class="text-5xl mb-4">🌳</div> <h4 class="font-bold">Parks</h4></div>
+        <div class="ghibli-card p-8 rounded-2xl text-center"> <div class="text-5xl mb-4">✈️</div> <h4 class="font-bold">Airports</h4></div>
+      </div>
+    </section>
+
+    <!-- Recently Found (clean blank state) -->
+    <section class="mb-20 fade-in">
+      <h3 class="text-4xl font-bold text-slate-800 mb-8 text-center tracking-tight">Recently Found Items</h3>
+      <div class="max-w-4xl mx-auto">
+        <div class="ghibli-card p-10 rounded-3xl text-center">
+          <p class="text-slate-600 text-lg">No items found yet — items will appear here once reported and verified.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feedback (kept) -->
+    <section class="mb-20 fade-in">
+      <h3 class="text-4xl font-bold text-slate-800 mb-12 text-center tracking-tight">Share Your Experience</h3>
+      <div class="max-w-2xl mx-auto">
+        <div class="ghibli-card p-12 rounded-3xl">
+          <form onsubmit="submitReview(event)" class="space-y-6">
+            <div><label class="block text-lg font-bold mb-2 text-slate-700">Your Name</label><input type="text" required class="w-full p-3 border-2 border-slate-200 rounded-2xl focus:border-blue-400 bg-white/50" placeholder="Enter your name"></div>
+            <div><label class="block text-lg font-bold mb-2 text-slate-700">Rate Your Experience</label>
+              <div class="flex gap-3 mb-4">
+                <button type="button" onclick="setRating(1)" class="star-btn text-3xl text-slate-300">⭐</button>
+                <button type="button" onclick="setRating(2)" class="star-btn text-3xl text-slate-300">⭐</button>
+                <button type="button" onclick="setRating(3)" class="star-btn text-3xl text-slate-300">⭐</button>
+                <button type="button" onclick="setRating(4)" class="star-btn text-3xl text-slate-300">⭐</button>
+                <button type="button" onclick="setRating(5)" class="star-btn text-3xl text-slate-300">⭐</button>
+              </div>
+            </div>
+            <div><label class="block text-lg font-bold mb-2 text-slate-700">Tell Us About Your Experience</label><textarea required class="w-full p-4 border-2 border-slate-200 rounded-2xl h-28 bg-white/50" placeholder="Share your story..."></textarea></div>
+            <button type="submit" class="w-full bg-gradient-to-r from-slate-500 to-slate-600 text-white py-4 rounded-2xl font-bold">Share My Review ✨</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- -------- MODALS & Swipe UI (cleaned + integrated) -------- -->
+
+  <!-- Updates Modal -->
+  <div id="updatesModal" class="modal" aria-hidden="true">
+    <div class="ghibli-card p-8 rounded-3xl max-w-2xl mx-4 max-h-96 overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-blue-900">Recent Updates</h3>
+        <button onclick="closeModal('updatesModal')" class="text-gray-500 text-2xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <p class="text-slate-600">No recent updates.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Modal -->
+  <div id="faqModal" class="modal" aria-hidden="true">
+    <div class="ghibli-card p-8 rounded-3xl max-w-2xl mx-4 max-h-96 overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-blue-900">Frequently Asked Questions</h3>
+        <button onclick="closeModal('faqModal')" class="text-gray-500 text-2xl">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div><h4 class="font-bold">How do I report a lost item?</h4><p class="text-gray-600">Click the "I Lost Something" button and fill out the form.</p></div>
+        <div><h4 class="font-bold">Is this service free?</h4><p class="text-gray-600">Yes — 404 Found is free to use.</p></div>
+        <div><h4 class="font-bold">How do I contact someone who found my item?</h4><p class="text-gray-600">You will be notified and given secure contact options once a match occurs.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lost & Found forms (kept, unchanged) -->
+  <div id="lostModal" class="modal" aria-hidden="true">
+    <div class="ghibli-card p-8 rounded-3xl max-w-md mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-red-700">Report Lost Item</h3>
+        <button onclick="closeModal('lostModal')" class="text-gray-500 text-2xl">✕</button>
+      </div>
+      <form onsubmit="submitLostForm(event)">
+        <div class="space-y-4">
+          <div><label class="block text-sm font-bold mb-2">Item Name</label><input type="text" required class="w-full p-3 border rounded-lg" placeholder="e.g., Blue backpack"></div>
+          <div><label class="block text-sm font-bold mb-2">Where did you lose it?</label><input type="text" required class="w-full p-3 border rounded-lg" placeholder="e.g., Central Park"></div>
+          <div><label class="block text-sm font-bold mb-2">Description</label><textarea required class="w-full p-3 border rounded-lg h-24" placeholder="Describe your item..."></textarea></div>
+          <div><label class="block text-sm font-bold mb-2">Your Contact</label><input type="email" required class="w-full p-3 border rounded-lg" placeholder="your.email@example.com"></div>
+          <button type="submit" class="w-full bg-red-500 text-white py-3 rounded-lg font-bold">Report Lost Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="foundModal" class="modal" aria-hidden="true">
+    <div class="ghibli-card p-8 rounded-3xl max-w-md mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-green-700">Report Found Item</h3>
+        <button onclick="closeModal('foundModal')" class="text-gray-500 text-2xl">✕</button>
+      </div>
+      <form onsubmit="submitFoundForm(event)">
+        <div class="space-y-4">
+          <div><label class="block text-sm font-bold mb-2">Item Name</label><input type="text" required class="w-full p-3 border rounded-lg" placeholder="e.g., Red wallet"></div>
+          <div><label class="block text-sm font-bold mb-2">Where did you find it?</label><input type="text" required class="w-full p-3 border rounded-lg" placeholder="e.g., Airport"></div>
+          <div><label class="block text-sm font-bold mb-2">Description</label><textarea required class="w-full p-3 border rounded-lg h-24" placeholder="Describe the item..."></textarea></div>
+          <div><label class="block text-sm font-bold mb-2">Your Contact</label><input type="email" required class="w-full p-3 border rounded-lg" placeholder="your.email@example.com"></div>
+          <button type="submit" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold">Report Found Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CLEAN Swipe Modal (integrated from file 2, but NO dummy data included) -->
+  <div id="swipeModal" class="swipe-modal" aria-hidden="true" role="dialog" aria-label="Swipe items modal">
+    <div class="max-w-2xl w-full">
+      <div class="bg-white rounded-3xl p-6 relative">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-2xl font-bold">Found Items</h3>
+          <button onclick="closeSwipe()" class="text-xl">✕</button>
+        </div>
+
+        <!-- card stack -->
+        <div id="cardStack" class="min-h-[300px] mb-4">
+          <!-- Will display skeleton / placeholder / cards depending on matchedItems -->
+        </div>
+
+        <!-- no-items placeholder (shown when no data) -->
+        <div id="noItemsPlaceholder" class="text-center text-slate-600" style="display:none;">
+          <p class="text-lg font-medium mb-2">No items available right now</p>
+          <p class="text-sm">We'll notify you when new matches are found.</p>
+        </div>
+
+        <!-- buttons -->
+        <div class="flex gap-4 justify-center mt-6">
+          <button id="undoBtn" class="px-5 py-3 rounded-xl bg-gray-200" disabled onclick="undoSwipe()">↺ Undo</button>
+          <button id="rejectBtn" class="px-6 py-3 rounded-xl bg-red-500 text-white" onclick="swipeLeft()">✕ Reject</button>
+          <button id="acceptBtn" class="px-6 py-3 rounded-xl bg-green-600 text-white" onclick="swipeRight()">♥ Accept</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Match modal (opens on swipe right) -->
+  <div id="matchModal" class="modal" aria-hidden="true">
+    <div class="ghibli-card p-8 rounded-3xl max-w-lg mx-4 text-center">
+      <div class="mb-4">
+        <h2 id="matchTitle" class="text-3xl font-bold">It's a Match! 🎉</h2>
+      </div>
+      <p id="matchInfo" class="text-slate-600 mb-6">You can now chat with the finder.</p>
+      <div class="flex gap-4 justify-center">
+        <button onclick="openMatchChat()" class="open-chat-button px-6 py-3 rounded-2xl">Start Chat</button>
+        <button onclick="closeModal('matchModal')" class="px-6 py-3 rounded-2xl border">Later</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat interface (only opens after match) -->
+  <div id="matchChat" class="modal" aria-hidden="true" style="align-items:flex-end; padding:0;">
+    <div class="bg-white w-full max-w-2xl rounded-t-3xl" role="dialog" aria-label="Match chat">
+      <div class="flex items-center justify-between px-4 py-3 border-b">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">👤</div>
+          <div>
+            <div id="chatHeaderTitle" class="font-bold">Finder</div>
+            <div id="chatHeaderSubtitle" class="text-xs text-slate-500">Matched item</div>
+          </div>
+        </div>
+        <div>
+          <button onclick="closeMatchChat()" class="px-3 py-2">✕</button>
+        </div>
+      </div>
+
+      <div id="chatMessages" class="p-4 max-h-[50vh] overflow-y-auto bg-white">
+        <!-- empty until messages are added by the user or backend -->
+        <div id="chatEmptyPlaceholder" class="text-center text-slate-500">
+          <p>No messages yet. Start the conversation.</p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t bg-white">
+        <div class="flex gap-3">
+          <input id="matchChatInput" class="flex-1 p-3 border rounded-2xl" placeholder="Type a message..." aria-label="Message input">
+          <button id="matchSendBtn" class="px-4 py-2 bg-blue-600 text-white rounded-2xl" onclick="sendMatchChat()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report modal (kept) -->
+  <div id="reportModal" class="modal" aria-hidden="true">
+    <div class="report-content bg-white p-6 rounded-xl max-w-md mx-4">
+      <h3 class="font-bold mb-3">Report Issue</h3>
+      <div class="space-y-2 mb-3">
+        <button class="w-full text-left p-3 border rounded">Item details don't match</button>
+        <button class="w-full text-left p-3 border rounded">Suspicious behavior</button>
+        <button class="w-full text-left p-3 border rounded">Inappropriate messages</button>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button class="px-4 py-2 rounded bg-gray-200" onclick="hideReportModal()">Cancel</button>
+        <button class="px-4 py-2 rounded bg-red-500 text-white" onclick="submitReport()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tutorial overlay (kept, cleaned: no chat references) -->
+  <div id="tutorialOverlay" class="modal" aria-hidden="true">
+    <div class="tutorial-content text-white max-w-md p-6 text-center">
+      <h2 class="text-2xl font-bold mb-3">Welcome to 404 Found! 👋</h2>
+      <div class="mb-3">
+        <strong>Swipe or drag cards</strong><br>Left to skip, Right to claim your item.
+      </div>
+      <div class="mb-3">
+        <strong>Use keyboard shortcuts</strong><br>← Left | → Right | Enter to accept
+      </div>
+      <div class="mb-3">
+        <strong>When you get a match</strong><br>Open the chat from the match screen to coordinate pickup.
+      </div>
+      <button id="gotItBtn" class="got-it-button px-4 py-2 rounded bg-blue-500 text-white">Got it!</button>
+    </div>
+  </div>
+
+  <!-- ----------------- SCRIPTS (cleaned, no dummy content) ----------------- -->
+  <script>
+    /* ----------------- Utilities ----------------- */
+    function openModal(id) { document.getElementById(id).classList.add('active'); document.getElementById(id).setAttribute('aria-hidden','false'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); document.getElementById(id).setAttribute('aria-hidden','true'); }
+
+    /* -------------- Review Rating + forms (kept minimal) -------------- */
+    let currentRating = 0;
+    function setRating(r) {
+      currentRating = (currentRating === arguments[0]) ? 0 : arguments[0];
+      document.querySelectorAll('.star-btn').forEach((s,i)=> s.style.color = (i < currentRating) ? '#3b82f6' : '#94a3b8');
+    }
+    function submitReview(e){ e.preventDefault(); if(!currentRating){ alert('Please select a rating'); return; } alert('Thanks — review submitted'); e.target.reset(); setRating(0); }
+
+    function submitLostForm(e){ e.preventDefault(); alert('Thanks — lost item reported'); closeModal('lostModal'); }
+    function submitFoundForm(e){ e.preventDefault(); alert('Thanks — found item reported'); closeModal('foundModal'); }
+
+    /* ---------------- Swipe integration (clean, no dummy data) ----------------
+       Behavior:
+       - matchedItems is empty by default
+       - loadMatchedItems(items) can be called by your backend code to populate items (array)
+       - UI shows skeleton while loading, then cards or "No items available"
+    --------------------------------------------------------------------------- */
+
+    let matchedItems = [];      // <- NO dummy items here. Backend should populate.
+    let currentIndex = 0;
+    let currentCardEl = null;
+    let swipeHistory = [];
+    let matchedItem = null;
+
+    // Open swipe modal
+    function openSwipe(){
+      document.getElementById('swipeModal').classList.add('active');
+      document.getElementById('swipeModal').setAttribute('aria-hidden','false');
+      // show skeleton while "loading" (frontend placeholder)
+      showLoadingSkeleton();
+      // simulated small loading time to let UI show skeleton; remove in real world
+      setTimeout(()=> {
+        renderNextCard();
+      }, 250);
+    }
+    function closeSwipe(){
+      document.getElementById('swipeModal').classList.remove('active');
+      document.getElementById('swipeModal').setAttribute('aria-hidden','true');
+    }
+
+    function showLoadingSkeleton(){
+      const stack = document.getElementById('cardStack');
+      stack.innerHTML = '<div class="skeleton p-6 rounded-lg min-h-[220px]"><div style="height:60%;border-radius:12px;margin-bottom:12px;"></div><div style="height:14px;width:60%;border-radius:6px;margin:6px 0;"></div><div style="height:14px;width:40%;border-radius:6px;"></div></div>';
+      document.getElementById('noItemsPlaceholder').style.display = 'none';
+    }
+
+    function renderNextCard(){
+      const stack = document.getElementById('cardStack');
+      stack.innerHTML = '';
+      if (currentIndex >= matchedItems.length || matchedItems.length === 0) {
+        document.getElementById('noItemsPlaceholder').style.display = 'block';
+        document.getElementById('undoBtn').disabled = (swipeHistory.length === 0);
+        return;
+      }
+
+      document.getElementById('noItemsPlaceholder').style.display = 'none';
+      const item = matchedItems[currentIndex];
+
+      const card = document.createElement('div');
+      card.className = 'card p-4';
+      card.innerHTML = `
+        <div class="h-56 bg-gray-100 rounded mb-4" style="background-image: url('${item.image || ''}'); background-size:cover; background-position:center;"></div>
+        <h3 class="text-xl font-bold mb-2">${item.name || 'Item'}</h3>
+        <p class="text-sm text-slate-600 mb-2">📍 ${item.location || 'Location'}</p>
+        <p class="text-sm text-slate-500 mb-3">${item.description || ''}</p>
+        <div><button class="px-4 py-2 rounded bg-slate-100" onclick="viewOnMap(${(item.coordinates && item.coordinates.lat) || 0}, ${(item.coordinates && item.coordinates.lng) || 0})">View on map</button></div>
+      `;
+      stack.appendChild(card);
+      currentCardEl = card;
+      document.getElementById('undoBtn').disabled = (swipeHistory.length === 0);
+    }
+
+    function swipeLeft(){
+      if (currentIndex >= matchedItems.length) return;
+      swipeHistory.push({ index: currentIndex, action: 'reject' });
+      currentIndex++;
+      renderNextCard();
+    }
+
+    function swipeRight(){
+      if (currentIndex >= matchedItems.length) return;
+      swipeHistory.push({ index: currentIndex, action: 'accept' });
+      matchedItem = matchedItems[currentIndex];
+      currentIndex++;
+      // show match modal (clean)
+      document.getElementById('matchInfo').textContent = matchedItem ? (`Matched: ${matchedItem.name}`) : 'Matched';
+      openModal('matchModal');
+      renderNextCard();
+    }
+
+    function undoSwipe(){
+      if (!swipeHistory.length) return;
+      const last = swipeHistory.pop();
+      currentIndex = last.index;
+      renderNextCard();
+    }
+
+    function viewOnMap(lat, lng){
+      if (!lat && !lng) { alert('Location not available'); return; }
+      window.open(`https://maps.google.com?q=${lat},${lng}`, '_blank', 'noopener');
+    }
+
+    // API-friendly loader: call this from backend to populate
+    function loadMatchedItems(items){
+      if (!Array.isArray(items)) return;
+      matchedItems = items;
+      currentIndex = 0;
+      swipeHistory = [];
+      matchedItem = null;
+      // if swipe modal is open, re-render
+      if (document.getElementById('swipeModal').classList.contains('active')) {
+        renderNextCard();
+      }
+    }
+
+    /* ---------------- Match Chat (clean, no auto replies) ---------------- */
+    function openMatchChat(){
+      closeModal('matchModal');
+      document.getElementById('matchChat').classList.add('active');
+      document.getElementById('matchChat').setAttribute('aria-hidden','false');
+      // set header
+      document.getElementById('chatHeaderTitle').textContent = (matchedItem && matchedItem.finderName) ? matchedItem.finderName : 'Finder';
+      document.getElementById('chatHeaderSubtitle').textContent = (matchedItem && matchedItem.name) ? matchedItem.name : 'Matched item';
+      // clear messages area
+      const messages = document.getElementById('chatMessages');
+      messages.innerHTML = '<div id="chatEmptyPlaceholder" class="text-center text-slate-500"><p>No messages yet. Start the conversation.</p></div>';
+    }
+
+    function closeMatchChat(){
+      document.getElementById('matchChat').classList.remove('active');
+      document.getElementById('matchChat').setAttribute('aria-hidden','true');
+      // optionally open swipe again
+    }
+
+    function sendMatchChat(){
+      const input = document.getElementById('matchChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      // Append user's message to chat (no simulated reply)
+      const messages = document.getElementById('chatMessages');
+      const el = document.createElement('div');
+      el.className = 'text-right mb-3';
+      el.innerHTML = `<div class="inline-block bg-blue-600 text-white p-3 rounded-2xl">${escapeHtml(text)}<div class="text-xs text-white/70 mt-1">Sent</div></div>`;
+      // remove placeholder if present
+      const placeholder = document.getElementById('chatEmptyPlaceholder');
+      if (placeholder) placeholder.remove();
+      messages.appendChild(el);
+      messages.scrollTop = messages.scrollHeight;
+      input.value = '';
+      // In real implementation, send message to backend here
+    }
+
+    function escapeHtml(unsafe) { return unsafe.replace(/[&<"'>]/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]); }
+
+    /* ---------------- Report modal simple handlers ---------------- */
+    function showReportModal(){ openModal('reportModal'); }
+    function hideReportModal(){ closeModal('reportModal'); }
+    function submitReport(){ hideReportModal(); alert('Report submitted. Our team will review it.'); }
+
+    /* ---------------- Tutorial ---------------- */
+    document.getElementById('gotItBtn').addEventListener('click', ()=> {
+      closeModal('tutorialOverlay');
+      localStorage.setItem('hasSeenTutorial', 'true');
+    });
+
+    // Show tutorial if not seen
+    if (!localStorage.getItem('hasSeenTutorial')) openModal('tutorialOverlay');
+
+    /* ------------- Small helper functions -------------- */
+    function openMatchFromExternal(itemObj){
+      // helper for backend to trigger match modal for a specific item
+      matchedItem = itemObj;
+      document.getElementById('matchInfo').textContent = itemObj && itemObj.name ? `Matched: ${itemObj.name}` : 'Matched';
+      openModal('matchModal');
+    }
+
+    // Expose loadMatchedItems & openMatchFromExternal to global so backend can call:
+    window.loadMatchedItems = loadMatchedItems;
+    window.openMatchFromExternal = openMatchFromExternal;
+
+    /* Clean up: remove any leftover sample data from previous files (there is none) */
+  </script>
+</body>
+</html>
