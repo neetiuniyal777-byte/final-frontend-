@@ -93,26 +93,60 @@
 
   <main class="max-w-7xl mx-auto px-6 py-12">
     <!-- Hero -->
-    <section class="text-center mb-24 fade-in relative">
-      <h2 class="text-6xl font-bold text-slate-800 mb-12 leading-tight tracking-tight">Find What's Lost.<br><span class="text-blue-600">Return What's Found.</span></h2>
-      <div class="flex flex-col md:flex-row gap-10 justify-center items-center">
-        <button onclick="openModal('lostModal')" class="ghibli-card p-10 rounded-3xl text-center min-w-72 group pulse-glow transition-all duration-300 transform hover:scale-105">
-          <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          </div>
-          <h3 class="text-2xl font-bold text-slate-800 mb-3">I Lost Something</h3>
-          <p class="text-slate-600 leading-relaxed">Report your lost item and we'll help you find it</p>
-        </button>
+ <section class="text-center mb-24 fade-in relative">
+            <!-- Background humans illustration -->
+            <div class="absolute top-0 left-1/4 opacity-8 floating">
+                <svg width="100" height="100" viewBox="0 0 120 120">
+                    <!-- Person walking with phone -->
+                    <circle cx="40" cy="25" r="10" fill="#0ea5e9"/>
+                    <rect x="35" y="35" width="10" height="20" rx="5" fill="#0284c7"/>
+                    <ellipse cx="28" cy="42" rx="3" ry="8" fill="#0ea5e9"/>
+                    <ellipse cx="52" cy="42" rx="3" ry="8" fill="#0ea5e9"/>
+                    <ellipse cx="37" cy="62" rx="3" ry="10" fill="#0369a1"/>
+                    <ellipse cx="43" cy="62" rx="3" ry="10" fill="#0369a1"/>
+                    <!-- Phone in hand -->
+                    <rect x="25" y="38" width="4" height="6" rx="1" fill="#1e293b"/>
+                </svg>
+            </div>
+            <div class="absolute top-0 right-1/4 opacity-8 floating" style="animation-delay: 1s;">
+                <svg width="100" height="100" viewBox="0 0 120 120">
+                    <!-- Person with found item -->
+                    <circle cx="60" cy="25" r="10" fill="#06b6d4"/>
+                    <rect x="55" y="35" width="10" height="20" rx="5" fill="#0891b2"/>
+                    <ellipse cx="48" cy="42" rx="3" ry="8" fill="#06b6d4"/>
+                    <ellipse cx="72" cy="42" rx="3" ry="8" fill="#06b6d4"/>
+                    <ellipse cx="57" cy="62" rx="3" ry="10" fill="#0e7490"/>
+                    <ellipse cx="63" cy="62" rx="3" ry="10" fill="#0e7490"/>
+                    <!-- Found item (keys) -->
+                    <circle cx="45" cy="40" r="2" fill="#0ea5e9"/>
+                    <rect x="43" y="42" width="4" height="2" rx="1" fill="#0ea5e9"/>
+                </svg>
+            </div>
+            
+            <h2 class="text-6xl font-bold text-slate-800 mb-12 leading-tight tracking-tight">Find What's Lost.<br><span class="text-blue-600">Return What's Found.</span></h2>
+            <div class="flex flex-col md:flex-row gap-10 justify-center items-center">
+                <button onclick="showLostForm()" class="ghibli-card bg-gradient-to-br from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50 p-10 rounded-3xl text-center min-w-72 group pulse-glow hover:wiggle transition-all duration-300 transform hover:scale-105">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="white" class="group-hover:animate-pulse">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3 group-hover:text-blue-700 transition-colors leading-tight">I Lost Something</h3>
+                    <p class="text-slate-600 group-hover:text-blue-600 transition-colors leading-relaxed">Report your lost item and we'll help you find it</p>
+                </button>
+                
+                <button onclick="showFoundForm()" class="ghibli-card bg-gradient-to-br from-teal-50 to-cyan-100/50 hover:from-teal-100 hover:to-cyan-200/50 p-10 rounded-3xl text-center min-w-72 group pulse-glow hover:wiggle transition-all duration-300 transform hover:scale-105">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="white" class="group-hover:animate-bounce">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3 group-hover:text-teal-700 transition-colors leading-tight">I Found Something</h3>
+                    <p class="text-slate-600 group-hover:text-teal-600 transition-colors leading-relaxed">Help return someone's lost item</p>
+                </button>
+            </div>
+        </section>
 
-        <button onclick="openModal('foundModal')" class="ghibli-card p-10 rounded-3xl text-center min-w-72 group pulse-glow transition-all duration-300 transform hover:scale-105">
-          <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <h3 class="text-2xl font-bold text-slate-800 mb-3">I Found Something</h3>
-          <p class="text-slate-600 leading-relaxed">Help return someone's lost item</p>
-        </button>
-      </div>
-    </section>
 
     <!-- About (kept exactly as requested) -->
     <section class="mb-20 fade-in">
